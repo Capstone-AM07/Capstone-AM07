@@ -69,7 +69,7 @@ flowchart LR
     end
     
     subgraph Analytics Engine
-        A-->|Weather data|B[Preprocesseing]
+        A-->|Weather data|B[Preprocessing]
         C-->|Load Data|B
         D-->|Capacity| B
         E-->|Date and Time| B
@@ -80,7 +80,7 @@ flowchart LR
     end
 
     subgraph UI    
-        S-->|Forecasted Solar Production| H[Dashboad]
+        S-->|Forecasted Solar Production| H[Dashboard]
         W-->|Forecasted Wind Production| H
         L -->|Forecasted Load| H
     end
