@@ -58,3 +58,29 @@ Telegraf--->|Push metrics to InfluxDB|InfluxDB
 Telegraf--->|Scrape metrics via endpoint|Prometheus
 Prometheus-->Alertmanager
 ```
+```mermaid
+flowchart LR
+    subgraph Data Sources
+        A[Weather Station]
+        C[Grid] 
+        D[Battery Storage]
+        E[Misc.]
+    end
+    
+    subgraph Analytics Engine
+        A-->|Weather data|B[Preprocesseing]
+        C-->|Load Data|B
+        D-->|Capacity| B
+        E-->|Date and Time| B
+        B --> |Normalized Solar Forecasting Data| S[Solar Forecasting Model]
+        
+        B --> |Normalized Wind Forecasting Data| W[Wind Forecasting Model]
+        B --> |Normalized Load Forecasting Data| L[Load Forecasting Model]
+    end
+
+    subgraph UI    
+        S-->|Forecasted Solar Production| H[Dashboad]
+        W-->|Forecasted Wind Production| H
+        L -->|Forecasted Load| H
+    end
+```
