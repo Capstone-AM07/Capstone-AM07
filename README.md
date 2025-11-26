@@ -58,6 +58,7 @@ Telegraf--->|Push metrics to InfluxDB|InfluxDB
 Telegraf--->|Scrape metrics via endpoint|Prometheus
 Prometheus-->Alertmanager
 ```
+### Analytics Engine Dataflow
 ```mermaid
 flowchart LR
     subgraph Data Sources
