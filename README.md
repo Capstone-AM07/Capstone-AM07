@@ -40,9 +40,9 @@ Automation["Automation Module"]
 Weather["Weather Forecast"]
 
 Weather-->|Weather data|InfluxDB
+InfluxDB-->|Forecasted load/gen|Automation
 InfluxDB-->|Historical metrics<br>+ Weather data|Analytics
 Analytics-->|Forecasted load/gen|InfluxDB
-InfluxDB-->|Forecasted load/gen|Automation
 Telegraf--->|Real-time metrics|Automation
 Automation-->|"DER control signals<br>(Battery charge/discharge)"|DERs
 
@@ -61,27 +61,26 @@ Prometheus-->Alertmanager
 ### Analytics Engine Dataflow
 ```mermaid
 flowchart LR
-    subgraph Data Sources
-        A[Weather Station]
-        C[Grid] 
-        D[Battery Storage]
-        E[Misc.]
-    end
-    
-    subgraph Analytics Engine
-        A-->|Weather data|B[Preprocessing]
-        C-->|Load Data|B
-        D-->|Capacity| B
-        E-->|Date and Time| B
-        B --> |Normalized Solar Forecasting Data| S[Solar Forecasting Model]
-        
-        B --> |Normalized Wind Forecasting Data| W[Wind Forecasting Model]
-        B --> |Normalized Load Forecasting Data| L[Load Forecasting Model]
+    subgraph Time-series Databases
+        InfluxDB
     end
 
-    subgraph UI    
-        S-->|Forecasted Solar Production| H[Dashboard]
-        W-->|Forecasted Wind Production| H
-        L -->|Forecasted Load| H
+    subgraph Analytics Engine
+        B[Preprocessing]
+        S[Solar Forecasting Model]
+        W[Wind Forecasting Model]
+        L[Load Forecasting Model]
+        C[Postprocessng]
     end
+
+    InfluxDB-->|Weather data| B
+    InfluxDB-->|Load Data|B
+    InfluxDB-->|Capacity Data| B
+    B --> |Normalized Solar Data| S
+    B --> |Normalized Wind Data| W
+    B --> |Normalized Load Data| L
+    S-->|Forecasted Solar Production| C
+    W-->|Forecasted Wind Production| C
+    L -->|Forecasted Load| C
+    C-->|All Forecasted Data|InfluxDB
 ```
