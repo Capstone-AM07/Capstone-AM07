@@ -18,6 +18,7 @@
 ```mermaid
 flowchart TD
 
+Load["Load<br>(DNP3)"]
 subgraph DERs
     MQTT["Wind<br>(MQTT)"]
     Modbus["Solar<br>(Modbus)"]
@@ -28,6 +29,7 @@ subgraph Telegraf
     Telegraf_MQTT["Telegraf<br>(MQTT Subscriber)"]
     Telegraf_Modbus["Telegraf<br>(Modbus Poller)"]
     Telegraf_HTTP["Telegraf<br>(HTTP Server)"]
+    Telegraf_DNP3["Telegraf<br>(DNP3 Server)"]
 end
 subgraph Time-series Databases
     InfluxDB["InfluxDB<br>(Long-term storage)"]
@@ -50,6 +52,7 @@ MQTT-->|MQTT publish|Mosquitto
 Mosquitto-->|MQTT subscribe|Telegraf_MQTT
 Modbus-->|Modbus TCP|Telegraf_Modbus
 HTTP-->|HTTP POST|Telegraf_HTTP
+Load--->|DNP3 over IP|Telegraf_DNP3
 
 Prometheus-->Grafana
 InfluxDB-->Grafana
