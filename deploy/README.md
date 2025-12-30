@@ -187,4 +187,4 @@ docker compose logs --tail=200 grafana
 - Grafana: 3000
 - Telegraf: none
 
-If accessing from another machine, replace localhost with your server IP (example: http://10.26.0.120:3000)
+If accessing from another machine, replace localhost with your server IP (example: http://10.26.0.71:3000)
