@@ -1,0 +1,17 @@
+services:
+  sensor-agent:
+    build: .
+    container_name: sensor-agent
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - "/dev/i2c-1:/dev/i2c-1"
+    volumes:
+      - /home/alpha/sensor-agent/app.py:/app/app.py:ro
+    environment:
+      INFLUX_URL: "http://10.233.251.71:8086"
+      INFLUX_TOKEN: "IrMhiw2j084Zz30jbuYn_FZJAa0AU393alMKMEMzC1bS8TBTZlwZl7IBqihBnhoPDLCMqd5ruVGygPMG8eEfFQ=="
+      INFLUX_ORG: "microgrid"
+      INFLUX_BUCKET: "telemetry"
+      SENSOR_HOST: "rpi-10.233.251.70"
+      INTERVAL_S: "10"
