@@ -8,12 +8,14 @@ This stack stores all configs and persistent data under:
 
 ## Create folder structure (everything lives here)
 
+```bash
 sudo mkdir -p /home/alpha/Capstone/Docker/prometheus/data
 sudo mkdir -p /home/alpha/Capstone/Docker/telegraf
 sudo mkdir -p /home/alpha/Capstone/Docker/grafana/data
 sudo mkdir -p /home/alpha/Capstone/Docker/grafana/provisioning
 sudo mkdir -p /home/alpha/Capstone/Docker/influxdb/data
 sudo mkdir -p /home/alpha/Capstone/Docker/influxdb/config
+```
 
 ---
 
@@ -21,6 +23,7 @@ sudo mkdir -p /home/alpha/Capstone/Docker/influxdb/config
 
 File: /home/alpha/Capstone/Docker/prometheus/prometheus.yml
 
+```bash
 sudo tee /home/alpha/Capstone/Docker/prometheus/prometheus.yml >/dev/null <<'YAML'
 global:
   scrape_interval: 15s
@@ -30,6 +33,7 @@ scrape_configs:
     static_configs:
       - targets: ["prometheus:9090"]
 YAML
+```
 
 ---
 
@@ -37,6 +41,7 @@ YAML
 
 File: /home/alpha/Capstone/Docker/telegraf/telegraf.conf
 
+```bash
 sudo tee /home/alpha/Capstone/Docker/telegraf/telegraf.conf >/dev/null <<'CONF'
 [agent]
   interval = "10s"
@@ -62,14 +67,17 @@ sudo tee /home/alpha/Capstone/Docker/telegraf/telegraf.conf >/dev/null <<'CONF'
 [[inputs.disk]]
   ignore_fs = ["tmpfs", "devtmpfs", "overlay", "squashfs"]
 CONF
+```
 
 ---
 
 ## Set permissions for persistent data directories
 
+```
 sudo chown -R 65534:65534 /home/alpha/Capstone/Docker/prometheus/data
 sudo chown -R 472:472 /home/alpha/Capstone/Docker/grafana/data
 sudo chown -R 1000:1000 /home/alpha/Capstone/Docker/influxdb/data /home/alpha/Capstone/Docker/influxdb/config || true
+```
 
 ---
 
@@ -77,6 +85,7 @@ sudo chown -R 1000:1000 /home/alpha/Capstone/Docker/influxdb/data /home/alpha/Ca
 
 File: /home/alpha/Capstone/Docker/docker-compose.yml
 
+```bash
 services:
   prometheus:
     image: prom/prometheus:latest
@@ -128,11 +137,13 @@ services:
       - /home/alpha/Capstone/Docker/grafana/provisioning:/etc/grafana/provisioning:ro
       - /home/alpha/Capstone/Docker/grafana/data:/var/lib/grafana
     restart: unless-stopped
+```
 
 ---
 
 ## Deployments (start/stop/delete)
 
+```bash
 cd /home/alpha/Capstone/Docker
 
 docker compose up -d
@@ -147,6 +158,7 @@ docker compose logs -f grafana
 docker compose stop
 docker compose down
 docker compose down -v
+```
 
 ---
 
@@ -176,8 +188,10 @@ Provisioning path (datasources/dashboards):
 /home/alpha/Capstone/Docker/grafana/provisioning
 
 Restart Grafana after provisioning changes:
+```bash
 docker compose restart grafana
 docker compose logs --tail=200 grafana
+```
 
 ---
 

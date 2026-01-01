@@ -2,10 +2,12 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    volumes:
+      - /home/alpha/Capstone/Docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /home/alpha/Capstone/Docker/prometheus/data:/prometheus
+    restart: unless-stopped
 
   influxdb:
     image: influxdb:2
@@ -13,30 +15,37 @@ services:
     ports:
       - "8086:8086"
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpass
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=admintoken==
-      - DOCKER_INFLUXDB_INIT_ORG=microgrid
-      - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpass
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "admintoken=="
+      DOCKER_INFLUXDB_INIT_ORG: microgrid
+      DOCKER_INFLUXDB_INIT_BUCKET: telemetry
+    volumes:
+      - /home/alpha/Capstone/Docker/influxdb/data:/var/lib/influxdb2
+      - /home/alpha/Capstone/Docker/influxdb/config:/etc/influxdb2
+    restart: unless-stopped
 
   telegraf:
     image: telegraf:latest
     container_name: telegraf
-    volumes:
-      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
     depends_on:
       - influxdb
+    volumes:
+      - /home/alpha/Capstone/Docker/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
-    volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=grafana
     depends_on:
       - prometheus
       - influxdb
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: grafana
+    volumes:
+      - /home/alpha/Capstone/Docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /home/alpha/Capstone/Docker/grafana/data:/var/lib/grafana
+    restart: unless-stopped
